@@ -982,7 +982,7 @@
   ],
   "schemaVersion": 16,
   "style": "dark",
-  "tags": [],
+  "tags": ["tesla"],
   "templating": {
     "list": [
       {

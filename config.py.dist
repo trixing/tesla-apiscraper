@@ -1,7 +1,9 @@
+import os
+
 # Telsa Credentials
-a_tesla_email = '<email>'  # myTesla Account Username
-a_tesla_password = '<password>'  # myTesla Account Password
-a_tesla_car_idx = 0  # Index of the Car in myTesla Account in case of multiple Cars
+a_tesla_email = os.environ.get('TESLA_USERNAME', None)               # myTesla Account Username
+a_tesla_passwd = os.environ.get('TESLA_PASSWORD', None)           # myTesla Account Password
+a_tesla_caridx = os.environ.get('TESLA_CAR', 0)                      # Index of the Car in myTesla Account in case of multiple Cars
 a_allow_sleep = 1  # Allow Car to fall asleep / don't wake up if car is asleep on Scraper start
 a_maximum_sleep = 1024  # Wake up every X seconds, if car is asleep
 
@@ -27,10 +29,10 @@ a_logfile = 'apiscraper.log'                # APIScraper Logfile
 a_loglevel = 20                             # Loglevel 10: DE
 
 # Influx DB Credentials
-a_influx_host = 'localhost'                 # Set this to influxdb_apiscraper in a Docker environment, otherwise: localhost
-a_influx_port = 8086                        # InfluxDB Port
-a_influx_user = 'tesla'                     # InfluxDB Username
-a_influx_pass = '<influxdbpassword>'        # InfluxDB Password
-a_influx_db = 'tesla'                       # InfluxDB Datebasename
+a_influx_host = os.environ.get('INFLUX_HOST', 'localhost') #InfluxDB Host
+a_influx_port = os.environ.get('INFLUX_PORT', 8086)        #InfluxDB Port
+a_influx_user = os.environ.get('INFLUX_USER', None)        #InfluxDB Username
+a_influx_pass = os.environ.get('INFLUX_PASSWORD', None)    #InfluxDB Password
+a_influx_db = os.environ.get('INFLUX_DB', 'tesla')                    #InfluxDB Datebasename
 
 a_dry_run = False  # Just for debugging purposes

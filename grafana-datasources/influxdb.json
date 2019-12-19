@@ -1,7 +1,7 @@
 {
   "name":"InfluxDB",
   "type":"influxdb",
-  "url":"http://localhost:8086",
+  "url":"http://db:8086",
   "access":"proxy",
   "database":"tesla"
 }

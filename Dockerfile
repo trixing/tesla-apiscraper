@@ -4,22 +4,10 @@ FROM debian:stretch-slim
 RUN apt-get -y update
 
 # Install Python
-RUN apt-get -y install python3
-RUN apt-get -y install apt-transport-https
-RUN apt-get -y install curl
-RUN apt-get -y install gnupg2
+RUN apt-get -y install python3 apt-transport-https curl gnupg2
 
 # Install Influx
-RUN curl -sL https://repos.influxdata.com/influxdb.key | apt-key add -
-RUN echo "deb https://repos.influxdata.com/debian stretch stable" | tee /etc/apt/sources.list.d/influxdb.list
-RUN apt-get -y update
-RUN apt-get -y install influxdb
-
-# Install Grafana
-RUN curl https://packages.grafana.com/gpg.key | apt-key add -
-RUN echo "deb https://packages.grafana.com/oss/deb stable main" | tee /etc/apt/sources.list.d/grafana.list
-RUN apt-get -y update
-RUN apt-get -y install grafana
+RUN pip install influxdb
 
 # Install Node
 RUN curl -sL https://deb.nodesource.com/setup_11.x | bash -
@@ -82,5 +70,4 @@ VOLUME ["/var/lib/influxdb"]
 
 # Run it
 EXPOSE 3000
-EXPOSE 8023
 CMD /start.sh

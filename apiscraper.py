@@ -226,6 +226,12 @@ class StateMonitor(object):
                             new_value = old_value
                             logger.debug(
                                 "Only minimal range difference received. No change registered to avoid wakelock.")
+                    if new_value and old_value and (element in [
+                        'charger_power', 'charger_voltage', 'charger_actual_current']):
+                        if abs(new_value - old_value) < 2.0:
+                           new_value = old_value;
+                           logger.info(
+                                "Only minimal charger voltage difference received. No change registered to avoid wakelock.")
                     if (old_value == '') or ((new_value is not None) and (new_value != old_value)) or \
                             ((request == 'charge_state' and result['charging_state'] == 'Charging') and (element in ['charger_power', 'charger_voltage', 'charger_actual_current'])):
                         logger.debug("Value Change, SG: " + request + ": Logging..." + element +
@@ -402,7 +408,8 @@ if __name__ == "__main__":
     # Create Tesla API Interface
     try:
         state_monitor = StateMonitor(a_tesla_email, a_tesla_password)
-    except:
+    except Exception as e:
+        print e
         sys.exit("Failed to initialize Owner API")
     main_loop_count = 0
 
@@ -491,6 +498,10 @@ while True:
                     " Poll Interval: " + str(poll_interval))
         if is_asleep == 'asleep' and a_allow_sleep == 1:
             logger.debug("Car is probably asleep, we let it sleep...")
+            poll_interval = 64
+
+        if is_asleep == 'offline':
+            logger.info("Car is offline, we avoid hammering the API...")
             poll_interval = 64
 
         if poll_interval >= 0:
