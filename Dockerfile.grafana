@@ -1,0 +1,33 @@
+FROM grafana/grafana
+
+# Install Grafana addons
+RUN apt-get -y install git
+WORKDIR /var/lib/grafana/plugins
+RUN git clone https://github.com/pR0Ps/grafana-trackmap-panel
+WORKDIR /var/lib/grafana/plugins/grafana-trackmap-panel
+RUN git checkout releases
+RUN grafana-cli plugins install natel-discrete-panel
+
+# Create temp files for dashboard API calls
+RUN echo '{"dashboard":' > /tmp/Charging.json
+RUN echo '{"dashboard":' > /tmp/Climate.json
+RUN echo '{"dashboard":' > /tmp/Driving.json
+RUN cat ./grafana-dashboards/Charging.json >> /tmp/Charging.json
+RUN cat ./grafana-dashboards/Climate.json >> /tmp/Climate.json
+RUN cat ./grafana-dashboards/Driving.json >> /tmp/Driving.json
+RUN echo '}' >> /tmp/Charging.json
+RUN echo '}' >> /tmp/Climate.json
+RUN echo '}' >> /tmp/Driving.json
+RUN sed -i 's/\${DS_TESLA}/InfluxDB/g' /tmp/Charging.json
+RUN sed -i 's/\${DS_TESLA}/InfluxDB/g' /tmp/Climate.json
+RUN sed -i 's/\${DS_TESLA}/InfluxDB/g' /tmp/Driving.json
+
+# Install Grafana data source and dashboards
+RUN service grafana-server start ; sleep 5 && \
+  curl -v -H 'Content-Type: application/json' -d @./grafana-datasources/influxdb.json http://admin:admin@localhost:3000/api/datasources && \
+  curl -v -H 'Content-Type: application/json' -d @/tmp/Charging.json http://admin:admin@localhost:3000/api/dashboards/db && \
+  curl -v -H 'Content-Type: application/json' -d @/tmp/Climate.json http://admin:admin@localhost:3000/api/dashboards/db && \
+  curl -v -H 'Content-Type: application/json' -d @/tmp/Driving.json http://admin:admin@localhost:3000/api/dashboards/db && \
+  service grafana-server stop
+
+COPY grafana.ini /etc/grafana/grafana.ini
