@@ -241,11 +241,11 @@ class StateMonitor(object):
                             any_change = True
                         if new_value is not None:
                             if element not in a_ignore:
-                                if element in a_validity_checks and eval(a_validity_checks[element]["eval"]):
-                                    logger.debug(
-                                        "VALIDITY CHECK VIOLATED >>> " + element + ":" + a_validity_checks[element][
-                                            "eval"])
-                                    new_value = a_validity_checks[element]["set"]
+                                #if element in a_validity_checks and eval(a_validity_checks[element]["eval"]):
+                                #    logger.debug(
+                                #        "VALIDITY CHECK VIOLATED >>> " + element + ":" + a_validity_checks[element][
+                                #            "eval"])
+                                #    new_value = a_validity_checks[element]["set"]
                                 row = { element: new_value }
                                 json_body["fields"].update(row)
                         self.old_values[request][element] = new_value
@@ -409,7 +409,7 @@ if __name__ == "__main__":
     try:
         state_monitor = StateMonitor(a_tesla_email, a_tesla_password)
     except Exception as e:
-        print e
+        logger.error("Startup Exception " + str(e))
         sys.exit("Failed to initialize Owner API")
     main_loop_count = 0
 
